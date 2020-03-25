@@ -40,12 +40,15 @@ test=dataset.loc['2011-01-01':]
 stepwise_model.fit(train)
 #prediction
 forecast=stepwise_model.predict(n_periods=len(test))
-
+forecast=pd.DataFrame(forecast,index=test.index,columns=['Prediction'])
 #execution time stop 
 #stop = timeit.default_timer() 
 
 #print('Time: ', stop - start)  #calculate 
 
+#plotting 
+pd.concat([dataset,forecast],axis=1).plot()
+pd.concat([test,forecast],axis=1).plot()
 #confusion matrix
 new_list=[]
 for item in forecast:

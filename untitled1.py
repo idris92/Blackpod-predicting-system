@@ -30,23 +30,28 @@ stepwise_model.fit(dataset['TempMax'])
 #Predict 
 forecast=stepwise_model.predict(n_periods=len(dataset['TempMax']))
 #prediction output into dataframe
-forecast = pd.DataFrame(forecast,columns=['Prediction'])
+forecast = pd.DataFrame(forecast,columns=['Pred'])
 #new data created and dataset date set as index
 new_data=dataset.join(forecast.set_index(dataset.index))
 
 #data split into train and test set
-inputs=['Rainfall','TempMin','Prediction']
+inputs=['Rainfall','TempMin','Pred']
 outputs=['TARGET']
 X_train,X_test,y_train,y_test=train_test_split(new_data[inputs],new_data[outputs],test_size=0.25,random_state=0)
 #Decision tree classifier called 
 classifier=DecisionTreeClassifier(criterion='entropy',random_state=0)
 #X_train and y_train fit to the classifier
 classifier.fit(X_train,y_train)
+
 #prediction
 y_pred=classifier.predict(X_test)
+
+#visualization
+forecast=pd.DataFrame(y_pred,index=y_test.index,columns=['Prediction'])
+pd.concat([y_test,forecast],axis=1).plot()
 #confusion matrix
 from sklearn.metrics import confusion_matrix
-cm=confusion_matrix(y_test,y_pred)
+cm=confusion_matrix(new_list,new_list1)
 #creating the model
 import pickle
 filename='model1.pkl'
