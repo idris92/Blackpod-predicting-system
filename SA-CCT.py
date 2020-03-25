@@ -6,7 +6,7 @@ Created on Wed Mar 11 09:14:23 2020
 """
 
 #importing libraries
-import timeit
+import timeit 
 import numpy as np
 import matplotlib.pyplot as plt
 from pmdarima.arima import auto_arima

@@ -6,46 +6,47 @@ Created on Tue Mar 10 11:31:56 2020
 """
 
 #importing libraries
-import timeit
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+import timeit #import timeit for runtime tracking
+import numpy as np #numpy is use for slicing numpy Array
+import matplotlib.pyplot as plt #matplot library is used for plotting 
+import pandas as pd #Pandas is use for data import and manipulation 
 
-start = timeit.default_timer()
+start = timeit.default_timer() #timer start here 
 #importing the database
 data=pd.read_excel('db1.xlsx')
 index=data['Date']
+#set the date as index
 data.index=pd.to_datetime(data.index)
-#data1={'Blackpod':1,'No Blackpod':0}
-#data=data.replace({'TARGET':data1})
 #data.head()
+#split the data into input and output 
 inputs=['Rainfall','TempMin','TempMax']
 outputs=['TARGET']
+#the target/output is converted to integer
 target={'Blackpod':1,'No Blackpod':0}
 data=data.replace({'TARGET':target})
 #X.head()
 
 #splitting the data into train and test set
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split #libarary use for splitting data into train and test data 
 X_train,X_test,y_train,y_test=train_test_split(data[inputs],data[outputs],test_size=0.25,random_state=0)
 
-#Feature scling
-from sklearn.preprocessing import StandardScaler
+#Feature scaling
+from sklearn.preprocessing import StandardScaler #library for standard scaling of data
 scaler=StandardScaler()
 X_train=scaler.fit_transform(X_train)
 X_test=scaler.transform(X_test)
 
 #fitting classifier to the training set
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier #import decision tree classifier 
 classifier=DecisionTreeClassifier(criterion='entropy',random_state=0)
 classifier.fit(X_train,y_train)
 
 #prediction
 y_pred=classifier.predict(X_test)
 
-stop = timeit.default_timer()
+stop = timeit.default_timer() #end of execution time 
 
-print('Time: ', stop - start)  
+print('Time: ', stop - start)  #calculate the time 
 
 #confusion metrics
 from sklearn.metrics import confusion_matrix
