@@ -22,4 +22,4 @@ def getCloudWeather(month, year):
 			return (temp_hi, temp_lo, rainfall)
 
 
-getCloudWeather("April", 2019)
+getCloudWeather("June", 2019)
