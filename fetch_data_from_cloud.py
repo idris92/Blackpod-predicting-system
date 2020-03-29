@@ -17,14 +17,9 @@ def getCloudWeather(month, year):
 			temp_hi = str(field['temp_hi'])
 			temp_lo = str(field['temp_lo'])
 			rainfall = str(field['rainfall'])
-			print (temp_lo, temp_hi, rainfall)
+			
+			print(temp_hi, temp_lo, rainfall)
+			return (temp_hi, temp_lo, rainfall)
 
 
-	
-
-	
-
-	return (temp_hi, temp_lo, rainfall)
-
-
-#getCloudWeather("April", 2019)
+getCloudWeather("April", 2019)
