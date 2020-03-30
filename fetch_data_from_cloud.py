@@ -12,7 +12,7 @@ def getCloudWeather(month, year):
 	db = mongo.db.weather
 
 	for field in db.find():
-		#print(field)
+
 		if ((str(month) == str(field['month'])) and (str(year) == str(field['year']))):
 			temp_hi = str(field['temp_hi'])
 			temp_lo = str(field['temp_lo'])
@@ -22,4 +22,4 @@ def getCloudWeather(month, year):
 			return (temp_hi, temp_lo, rainfall)
 
 
-#getCloudWeather("June", 2019)
+#getCloudWeather("June", 2020)

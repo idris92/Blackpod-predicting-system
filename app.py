@@ -6,8 +6,9 @@ Created on Sat Mar 21 07:01:47 2020
 """
 #import libraries
 
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request
 from fetch_data_from_cloud import *
+
 
 
 import pandas as pd
@@ -22,28 +23,37 @@ from pmdarima.arima import auto_arima
 
 
 
+import pandas as pd
+from sklearn.metrics import confusion_matrix
+import pickle
+
+
+
 @app.route('/', methods = ['POST'])
 def get_prediction():
 	month = request.get_json()['month']
 	year = request.get_json()['year']
 
 	temp_hi, temp_lo, rainfall = getCloudWeather(month, year)
-	temp_hi = int(temp_hi)
-	temp_lo = int(temp_lo)
-	rainfall = int(rainfall)
+	temp_hi = float(temp_hi)
+	temp_lo = float(temp_lo)
+	rainfall = float(rainfall)
 
 	prediction = mainScript(temp_hi, temp_lo, rainfall)
 
+	response = {"prediction":prediction[0]}
+
+
+	return jsonify(response)
 
 
 
 
 
 
-
-def mainScript(temp_hi, temp_lo, rainfall):
+def testScript(temp_hi, temp_lo, rainfall):
 	#load the dataset
-	dataset=pd.read_excel('db1.xlsx')
+	dataset = pd.read_excel('db1.xlsx')
 	#set date as index
 	dataset=dataset.set_index('Date')
 	#calculate the p,d,q
@@ -77,24 +87,46 @@ def mainScript(temp_hi, temp_lo, rainfall):
 	forecast=pd.DataFrame(y_pred,index=y_test.index,columns=['Prediction'])
 	pd.concat([y_test,forecast],axis=1).plot()
 	#confusion matrix
-	from sklearn.metrics import confusion_matrix
-	cm=confusion_matrix(new_list,new_list1)
+	
+	cm = confusion_matrix(new_list,new_list1)
 	#creating the model
-	import pickle
+	
 	filename='model1.pkl'
-	with open('C:/Users/dolapo/Documents/BlackPod/'+filename,'wb')as file:
-    	pickle.dump(classifier,file)
+	with open(filename,'wb')as file:
+		pickle.dump(classifier,file)
 
-	with open('C:/Users/dolapo/Documents/BlackPod/model1.pkl','rb')as f:
-    	loaded_model=pickle.load(f)
-	import pandas as pd
+	with open('model1.pkl','rb') as f:
+		loaded_model = pickle.load(f)
+	
 	my_data=pd.DataFrame({'Rainfall':[rainfall],'TempMin':[temp_lo],'TempMax':[temp_hi]})
 	prediction = loaded_model.predict(my_data)
+	print(prediction)
 
 	return prediction
 
 
 
 
+def mainScript(temp_hi, temp_lo, rainfall):
+	filename = 'model1.pkl'
+
+	with open (filename, 'rb') as modelFile:
+		model = pickle.load(modelFile)
+
+	dataframe = pd.DataFrame({'Rainfall':[rainfall],'TempMin':[temp_lo],'TempMax':[temp_hi]})
+	prediction = model.predict(dataframe)
+	print(prediction[0])
+
+	return prediction
+
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
+
+
+
+
